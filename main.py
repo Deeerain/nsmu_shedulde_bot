@@ -4,7 +4,9 @@ import logging
 import services
 from nsmu_parser import get_groups, get_specs
 
-from handlers.subscribers import *
+from bot.handlers.subscribers import *
+from bot.handlers.common import *
+from bot import application
 
 logging.basicConfig(level=logging.INFO)
 
