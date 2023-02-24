@@ -4,7 +4,7 @@ from telegram import (
     Update, KeyboardButton, ReplyKeyboardMarkup)
 from telegram.ext import ContextTypes, MessageHandler, filters, ConversationHandler
 
-from bot.bot_instance import application, get_spec_keyboard, get_group_keyboard
+from bot.bot_instance import application, get_spec_keyboard
 
 
 class SubsButtons(Enum):

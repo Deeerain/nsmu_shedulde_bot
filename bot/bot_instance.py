@@ -3,9 +3,10 @@ from typing import Sequence
 
 from telegram import (InlineKeyboardButton,
                       InlineKeyboardMarkup, ReplyKeyboardMarkup, KeyboardButton)
-from telegram.ext import (Application)
+from telegram.ext import Application
 
-import services
+from services.group import all_group_by_spec
+from services.specialization import all_specs
 
 
 TOKEN = '6098297978:AAGr3lmVE9ogwEcS06TBEQKI7ZC7SCZy5Zs'
@@ -20,7 +21,7 @@ def get_spec_keyboard(keyboard_type: InlineKeyboardMarkup | ReplyKeyboardMarkup)
     keyboard = []
     keyboard_button_type = KeyboardButton if keyboard_type == ReplyKeyboardMarkup else InlineKeyboardButton
 
-    for spec in services.all_specs():
+    for spec in all_specs():
         button_data: dict[str, str] = {}
 
         button_data['text'] = spec.title
@@ -41,7 +42,7 @@ def get_group_keyboard(spec: int, keyboard_type: InlineKeyboardMarkup | ReplyKey
     keyboard = []
     keyboard_button_type = KeyboardButton if keyboard_type == ReplyKeyboardMarkup else InlineKeyboardButton
 
-    for group in services.all_group_by_spec(spec):
+    for group in all_group_by_spec(spec):
 
         button_data: dict[str, str] = {}
         button_data['text'] = group.title
