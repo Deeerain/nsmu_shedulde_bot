@@ -1,6 +1,6 @@
 from sqlalchemy import (
     Column, Integer, Text, ForeignKey)
-from db import DeclarativeBase
+from db.connection import DeclarativeBase
 
 
 class User(DeclarativeBase):
