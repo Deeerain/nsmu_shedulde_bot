@@ -12,21 +12,6 @@ from bot.bot_instance import get_spec_keyboard, get_group_keyboard, application
 
 
 @get_user_decorator
-async def wlecome(update: Update, context: ContextTypes.DEFAULT_TYPE, *, user: models.User):
-    logging.info('Welcome messgae handler')
-
-    keboard = [
-        [KeyboardButton('Расписание (Сегодня)')],
-        [KeyboardButton('Расписание (Завтра)')],
-        [KeyboardButton('Подписка')],
-    ]
-    replay_markup = ReplyKeyboardMarkup(keboard)
-    text = f'Добро пожаловать {update.message.from_user.full_name}'
-
-    await application.bot.send_message(update.message.chat_id, text, reply_markup=replay_markup)
-
-
-@get_user_decorator
 async def shedulde_today(update: Update, context: ContextTypes.DEFAULT_TYPE, *, user: models.User):
     logging.info('Shedulde today messgae handler')
 
