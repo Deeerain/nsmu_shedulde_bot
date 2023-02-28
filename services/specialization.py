@@ -22,6 +22,13 @@ def all_specs() -> list[Specialization] | None:
         return specializations
 
 
+def get_by_name(name: str) -> Specialization | None:
+    with Session() as s:
+
+        specialization = s.query(Specialization).filter_by(title=name).first()
+        return specialization
+
+
 def all_group_by_spec(spec_id: int) -> list[Group]:
     with Session() as s:
         return s.query(Group).filter_by(specialization_id=spec_id)
