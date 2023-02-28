@@ -2,9 +2,11 @@ from enum import Enum
 
 from telegram import (
     Update, KeyboardButton, ReplyKeyboardMarkup)
-from telegram.ext import ContextTypes, MessageHandler, filters, ConversationHandler
+from telegram.ext import ContextTypes, ConversationHandler
 
-from bot.bot_instance import application, get_spec_keyboard
+from bot.bot_instance import application, get_spec_keyboard, get_group_keyboard
+from services.specialization import get_by_name
+from services.group import get_group_by_name
 
 
 class SubsButtons(Enum):
@@ -26,11 +28,11 @@ async def subscribes(update: Update, context: ContextTypes.DEFAULT_TYPE):
     replay_marup = ReplyKeyboardMarkup(keyboard)
 
     await application.bot.send_message(update.message.chat_id, 'Меню подписок', reply_markup=replay_marup)
-    # await update.message.edit_reply_markup(replay_marup)
 
 
 async def choise_specialization(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    replay_keyboard = get_spec_keyboard(keyboard_type=ReplyKeyboardMarkup)
+    replay_keyboard = ReplyKeyboardMarkup(
+        get_spec_keyboard(keyboard_type=ReplyKeyboardMarkup))
 
     await application.bot.send_message(update.message.chat_id, "Ваша специализация", reply_markup=replay_keyboard)
 
@@ -39,23 +41,39 @@ async def choise_specialization(update: Update, context: ContextTypes.DEFAULT_TY
 
 async def ready_specialization(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    await application.bot.send_message(update.message.chat_id, f'Your choise: {update.message.text}')
+    specialization = get_by_name(update.message.text)
+
+    print(specialization)
+
+    replay_keyboard = ReplyKeyboardMarkup(
+        get_group_keyboard(specialization.specialization_id, ReplyKeyboardMarkup))
+
+    context.user_data.setdefault(
+        SubscribesCommandState.CHOISE_SPECIALIZATION, specialization)
+
+    await application.bot.send_message(update.message.chat_id, f'Отлично, теперь выбери группу', reply_markup=replay_keyboard)
+
+    return SubscribesCommandState.CHOISE_GROUP
+
+
+async def ready_group(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    group = get_group_by_name(update.message.text)
+
+    keyboard = [
+        [KeyboardButton('Подписаться')],
+        [KeyboardButton('Отмена')],
+    ]
+
+    replay_keyboard = ReplyKeyboardMarkup(keyboard)
+
+    context.user_data.setdefault(SubscribesCommandState.CHOISE_GROUP, group)
+
+    await application.bot.send_message(update.message.chat_id, text='Отлично!', reply_markup=replay_keyboard)
+
+    return ConversationHandler.END
 
 
 async def subscribe_done(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    pass
+    await application.bot.send_message(update.message.chat_id, 'Отлично, вы подписались')
 
-
-subscriber_conversation_handler = ConversationHandler(
-    entry_points=[MessageHandler(filters.Text(
-        SubsButtons.SUBSCIBE.value), choise_specialization)],
-    states={
-        SubscribesCommandState.CHOISE_SPECIALIZATION: [MessageHandler(
-            filters.ALL, ready_specialization)]
-    },
-    fallbacks=[]
-)
-
-application.add_handler(MessageHandler(
-    filters.Text("Подписка"), subscribes))
-application.add_handler(subscriber_conversation_handler)
+    return ConversationHandler.END

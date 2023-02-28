@@ -28,3 +28,11 @@ def get_group_by_id(id: int) -> Group | None:
 
     with Session() as s:
         return s.query(Group).filter_by(group_id=id).first()
+
+
+def get_group_by_name(name: str) -> Group | None:
+
+    with Session() as s:
+        group = s.query(Group).filter_by(title=name).first()
+
+        return group
