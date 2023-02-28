@@ -2,8 +2,7 @@ import logging
 
 from telegram import (Update,
                       InlineKeyboardMarkup, ReplyKeyboardMarkup, KeyboardButton)
-from telegram.ext import (CommandHandler,
-                          ContextTypes, filters, CallbackQueryHandler, MessageHandler)
+from telegram.ext import ContextTypes
 
 from services.user import get_user_decorator
 from services.group import get_group_by_id
@@ -46,7 +45,7 @@ async def shedulde_tomorrow(update: Update, context: ContextTypes.DEFAULT_TYPE, 
 
     replay_markup = InlineKeyboardMarkup(
         get_spec_keyboard(InlineKeyboardMarkup))
-    
+
     context.user_data['s_date'] = 'tomorrow'
 
     await update.message.reply_text(f'Выбери специализацию:',
@@ -77,14 +76,3 @@ async def button(update: Update, contex: ContextTypes.DEFAULT_TYPE, *, user: mod
             return
 
         await update.callback_query.edit_message_text('На сегодня нет раписания')
-
-
-application.add_handler(CommandHandler('start', wlecome))
-
-
-application.add_handler(MessageHandler(
-    filters.Text('Расписание (Сегодня)'), shedulde_today))
-application.add_handler(MessageHandler(
-    filters.Text('Расписание (Завтра)'), shedulde_tomorrow))
-
-application.add_handler(CallbackQueryHandler(button))
