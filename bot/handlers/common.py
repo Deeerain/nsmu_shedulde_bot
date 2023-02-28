@@ -34,6 +34,8 @@ async def shedulde_today(update: Update, context: ContextTypes.DEFAULT_TYPE, *, 
     replay_markup = InlineKeyboardMarkup(
         get_spec_keyboard(InlineKeyboardMarkup))
 
+    context.user_data['s_date'] = 'today'
+
     await update.message.reply_text(f'Выбери специализацию:',
                                     reply_markup=replay_markup)
 
@@ -44,6 +46,8 @@ async def shedulde_tomorrow(update: Update, context: ContextTypes.DEFAULT_TYPE, 
 
     replay_markup = InlineKeyboardMarkup(
         get_spec_keyboard(InlineKeyboardMarkup))
+    
+    context.user_data['s_date'] = 'tomorrow'
 
     await update.message.reply_text(f'Выбери специализацию:',
                                     reply_markup=replay_markup)
@@ -52,7 +56,7 @@ async def shedulde_tomorrow(update: Update, context: ContextTypes.DEFAULT_TYPE, 
 @get_user_decorator
 async def button(update: Update, contex: ContextTypes.DEFAULT_TYPE, *, user: models.User):
     type, data = update.callback_query.data.split(':')
-    shedulde_time = contex.user_data.get('shedulde_time', 'today')
+    shedulde_time = contex.user_data.get('s_date', 'today')
 
     if type == 'spec':
 
@@ -79,8 +83,8 @@ application.add_handler(CommandHandler('start', wlecome))
 
 
 application.add_handler(MessageHandler(
-    filters.Text('Расписание (Сегодня)'), shedulde_tomorrow))
+    filters.Text('Расписание (Сегодня)'), shedulde_today))
 application.add_handler(MessageHandler(
-    filters.Text('Расписание (Сегодня)'), shedulde_tomorrow))
+    filters.Text('Расписание (Завтра)'), shedulde_tomorrow))
 
 application.add_handler(CallbackQueryHandler(button))
