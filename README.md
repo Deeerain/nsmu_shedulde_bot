@@ -17,4 +17,6 @@
 
 `# .\env\Scripts\activate`
 
+`pip -r requirements.txt`
+
 `# python main.py run`
